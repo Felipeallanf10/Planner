@@ -3,6 +3,7 @@ import { Button } from "../../components/button";
 import { FormEvent } from "react";
 import { api } from "../../lib/axios";
 import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 interface CreateActivityModalProps{
   CloseCreateActivityModalOpen: () => void
@@ -11,6 +12,11 @@ interface CreateActivityModalProps{
 
 export function CreateActivityModal({CloseCreateActivityModalOpen}: CreateActivityModalProps) {
   const {tripId} = useParams();
+  const navigate = useNavigate();
+
+  const reloadPage = () => {
+    navigate(0);
+  };
 
   async function createActivity(event: FormEvent<HTMLFormElement>){
     event.preventDefault();
@@ -25,7 +31,7 @@ export function CreateActivityModal({CloseCreateActivityModalOpen}: CreateActivi
       occurs_at
     })
 
-    window.document.location.reload()
+    reloadPage();
   }
 
 
