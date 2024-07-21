@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { DateRange, DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import { default as defaultStyles } from 'react-day-picker/dist/style.module.css'
+import { ptBR } from 'date-fns/locale'
 
 interface DestinationAndDateStep {
   isGuestsInputOpen: boolean
@@ -32,9 +33,12 @@ export function DestinationAndDateStep({
   }
 
   const displayedDate =
-    eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to
-      ? format(eventStartAndDates.from, "d ' de ' LLL").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL"))
-      : null
+  eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to && eventStartAndDates.from.getMonth() != eventStartAndDates.to.getMonth()
+  ? format(eventStartAndDates.from, "d ' de ' LLL").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL", { locale: ptBR }))
+  : eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to && eventStartAndDates.from.getMonth() === eventStartAndDates.to.getMonth()
+  ? format(eventStartAndDates.from, "d").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL", { locale: ptBR }))
+  : null 
+  
   return (
     <div className="h-16 bg-zinc-900 px-4 rounded-xl flex items-center shadow-shape gap-3">
       <div className="flex items-center gap-2 flex-1">
@@ -76,6 +80,7 @@ export function DestinationAndDateStep({
               selected={eventStartAndDates}
               onSelect={setEventStartAndDates}
               classNames={defaultStyles}
+              locale={ptBR}
             />
           </div>
         </div>
