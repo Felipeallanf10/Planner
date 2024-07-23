@@ -41,7 +41,6 @@ export function CreateGuestsModalPath({
     const email = data.get('email')?.toString()
     
     await api.patch(`/participants/${participantId}/confirm`,{
-      id: participantId,
       name: name,
       email: email
     })
