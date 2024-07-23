@@ -21,9 +21,11 @@ export function DestinationAndDateStep({
   closeGuestsInput,
   setDestination,
   setEventStartAndDates,
-  eventStartAndDates
+  eventStartAndDates,
 }: DestinationAndDateStep) {
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [destinationInputValue, setDestinationInputValue] = useState('');
+  const [dateInputValue, setDateInputValue] = useState('Quando?');
 
   function openDatePicker() {
     return setIsDatePickerOpen(true)
@@ -32,13 +34,24 @@ export function DestinationAndDateStep({
     return setIsDatePickerOpen(false)
   }
 
-  const displayedDate =
-  eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to && eventStartAndDates.from.getMonth() != eventStartAndDates.to.getMonth()
-  ? format(eventStartAndDates.from, "d ' de ' LLL").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL", { locale: ptBR }))
-  : eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to && eventStartAndDates.from.getMonth() === eventStartAndDates.to.getMonth()
-  ? format(eventStartAndDates.from, "d").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL", { locale: ptBR }))
-  : null 
+  function checkInputsHasContent(){
+    if(destinationInputValue.trim().length >= 4 && dateInputValue != 'Quando?'){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   
+      const displayedDate =
+    eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to && eventStartAndDates.from.getMonth() != eventStartAndDates.to.getMonth()
+    ? format(eventStartAndDates.from, "d ' de ' LLL").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL", { locale: ptBR }))
+    : eventStartAndDates && eventStartAndDates.from && eventStartAndDates.to && eventStartAndDates.from.getMonth() === eventStartAndDates.to.getMonth()
+    ? format(eventStartAndDates.from, "d").concat(' até ').concat(format(eventStartAndDates.to, "d ' de ' LLL", { locale: ptBR }))
+    : null 
+
+    let contentDateInput = displayedDate == null? 'Quando?' : displayedDate
+ 
   return (
     <div className="h-16 bg-zinc-900 px-4 rounded-xl flex items-center shadow-shape gap-3">
       <div className="flex items-center gap-2 flex-1">
@@ -46,9 +59,13 @@ export function DestinationAndDateStep({
         <input
           disabled={isGuestsInputOpen}
           type="text"
+          value={destinationInputValue}
           placeholder="Para onde você vai?"
           className="bg-transparent text-lg placeholder-zinc-400 outline-none flex-1"
-          onChange={event => setDestination(event.target.value)}
+          onChange={event => {
+            setDestination(event.target.value)
+            setDestinationInputValue(event.target.value)
+          }}
         />
       </div>
 
@@ -59,7 +76,7 @@ export function DestinationAndDateStep({
       >
         <Calendar className="size-5 text-zinc-400" />
         <span className="text-lg text-zinc-400 w-40 flex-1">
-          {displayedDate || 'Quando?'}
+          {dateInputValue}
         </span>
       </button>
 
@@ -69,7 +86,10 @@ export function DestinationAndDateStep({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold ">Selecione a data:</h2>
-                <button type="button" onClick={closeDatePicker}>
+                <button type="button" onClick={() =>{
+                  closeDatePicker();
+                  setDateInputValue(contentDateInput);
+                  }}>
                   <X className="size-5 text-zinc-400" />
                 </button>
               </div>
@@ -94,7 +114,9 @@ export function DestinationAndDateStep({
           <Settings2 className="size-5 " />
         </Button>
       ) : (
-        <Button onClick={openGuestsInput}>
+        <Button onClick={() => {
+          checkInputsHasContent() ? openGuestsInput() : null
+          }}>
           Continuar
           <ArrowRight className="size-5 " />
         </Button>

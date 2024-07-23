@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { api } from '../../lib/axios'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 interface trip {
   id: String
@@ -22,9 +23,24 @@ export function DestinationAndDateHeader() {
     api.get(`/trips/${tripId}`).then(response => SetTrip(response.data.trip))
   }, [tripId])
 
-  const displayedDate = trip 
-  ? format(trip.starts_at, "d ' de ' LLL").concat(' até ').concat(format(trip.ends_at, "d ' de ' LLL"))
-  : null
+  const displayedDate =
+  trip &&
+  trip.starts_at &&
+  trip.ends_at &&
+  new Date(trip.starts_at).getMonth() != new Date(trip.ends_at).getMonth()
+    ? format(trip.starts_at, "d ' de ' LLL")
+        .concat(' até ')
+        .concat(format(trip.ends_at, "d ' de ' LLL", { locale: ptBR }))
+    : trip &&
+      trip.starts_at &&
+      trip.ends_at &&
+      new Date(trip.starts_at).getMonth() === new Date(trip.ends_at).getMonth()
+    ? format(trip.starts_at, 'd')
+        .concat(' até ')
+        .concat(
+          format(trip.ends_at, "d ' de ' LLLL", { locale: ptBR })
+        )
+    : null
 
   return (
     <div className="px-4 h-16 rounded-xl bg-zinc-900 shadow-shape flex items-center justify-between">
